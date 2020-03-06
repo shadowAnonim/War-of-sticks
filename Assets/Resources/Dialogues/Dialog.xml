@@ -1,0 +1,9 @@
+<dialogue name="Dialog">
+  <node id="0" npcText="Привет">
+    <answer text="Да" toNode="1" />
+    <answer text="Нет" exit="True" />
+  </node>
+  <node id="1" npcText="ОК">
+    <answer text="Пока" exit="True" />
+  </node>
+</dialogue>

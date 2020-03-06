@@ -290,7 +290,7 @@ public class BETA_SETTINGS{
         }
         mouseSensitivityInternal = mouseSensitivity;
         cameraStartingPosition = playerCamera.transform.localPosition;
-        if(lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
+        //(lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
         baseCamFOV = playerCamera.fieldOfView;
         #endregion
 
@@ -713,6 +713,11 @@ public class BETA_SETTINGS{
             yield return null;
         }
         playerCamera.transform.localPosition = cameraStartingPosition;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        DialogueManager.Internal.DialogueStart(other.gameObject.GetComponent<NPC>().Dialog);
     }
 
 }

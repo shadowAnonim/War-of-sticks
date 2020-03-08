@@ -20,12 +20,14 @@ public class DialogueManager : MonoBehaviour
     private List<RectTransform> buttons = new List<RectTransform>();
     private float curY, height;
     private static DialogueManager _internal;
+    private FirstPersonAIO hero;
 
     public void DialogueStart(string name)
     {
         if (name == string.Empty) return;
         fileName = name;
         Load();
+        hero.enableCameraMovement = false;
     }
 
     public static DialogueManager Internal
@@ -38,6 +40,7 @@ public class DialogueManager : MonoBehaviour
         _internal = this;
         button.gameObject.SetActive(false);
         scrollRect.gameObject.SetActive(false);
+        hero = GameObject.Find("Hero").GetComponent<FirstPersonAIO>();
     }
 
     void Load()
@@ -155,6 +158,7 @@ public class DialogueManager : MonoBehaviour
     void CloseDialogue()
     {
         scrollRect.gameObject.SetActive(false);
+        hero.enableCameraMovement = true;
         ClearDialogue();
     }
 

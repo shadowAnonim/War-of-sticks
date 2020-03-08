@@ -54,6 +54,7 @@ using System.Collections.Generic;
 public class FirstPersonAIO : MonoBehaviour {
 
     public string versionNum = "19.10.17f";
+    public bool dialogMode;
 
     #region Variables
 
@@ -290,7 +291,7 @@ public class BETA_SETTINGS{
         }
         mouseSensitivityInternal = mouseSensitivity;
         cameraStartingPosition = playerCamera.transform.localPosition;
-        //(lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
+        //if (lockAndHideCursor) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
         baseCamFOV = playerCamera.fieldOfView;
         #endregion
 

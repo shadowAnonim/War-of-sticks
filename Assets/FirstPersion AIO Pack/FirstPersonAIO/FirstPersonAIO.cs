@@ -55,6 +55,9 @@ public class FirstPersonAIO : MonoBehaviour {
 
     public string versionNum = "19.10.17f";
     public bool dialogMode;
+    public int reputation = 10;
+    public int money = 0;
+    public int power = 100;
 
     #region Variables
 
@@ -249,9 +252,12 @@ public class BETA_SETTINGS{
         #endregion
 
         #region BETA_SETTINGS - Awake
-    
-#endregion
 
+        #endregion
+
+        reputation = 0;
+
+        money = 1000;
     }
 
     private void Start()
@@ -323,9 +329,13 @@ public class BETA_SETTINGS{
 
     private void Update()
     {
+        if (reputation < 0 && !dialogMode)
+        {
+            DialogueManager.Internal.DialogueStart("repEnd");
+        }
         #region Look Settings - Update
 
-            if(enableCameraMovement){
+            if(/*enableCameraMovement*/ !dialogMode){
             float mouseXInput;
             float mouseYInput;
             float camFOV = playerCamera.fieldOfView;

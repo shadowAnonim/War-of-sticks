@@ -39,6 +39,9 @@ public class DialogueGenerator : MonoBehaviour
                 element.SetAttribute("text", node[j].playerAnswer[i].text);
                 if (node[j].playerAnswer[i].toNode > 0) element.SetAttribute("toNode", node[j].playerAnswer[i].toNode.ToString());
                 if (node[j].playerAnswer[i].exit) element.SetAttribute("exit", node[j].playerAnswer[i].exit.ToString());
+                if (node[j].playerAnswer[i].reputation != 0) element.SetAttribute("reputation", node[j].playerAnswer[i].reputation.ToString());
+                if (node[j].playerAnswer[i].reputation != 0) element.SetAttribute("money", node[j].playerAnswer[i].money.ToString());
+                if (node[j].playerAnswer[i].reputation != 0) element.SetAttribute("power", node[j].playerAnswer[i].power.ToString());
                 userNode.AppendChild(element);
             }
 
@@ -64,4 +67,8 @@ public class PlayerAnswer
     public string text;
     public int toNode;
     public bool exit;
+    public int reputation;
+    public int money;
+    public int power;
+    public bool end;
 }

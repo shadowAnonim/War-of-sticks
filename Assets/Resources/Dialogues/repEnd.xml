@@ -1,0 +1,5 @@
+<dialogue name="repEnd">
+  <node id="0" npcText="Ваша репутация оказалась слишком низка. Вы проиграли.">
+    <answer text="Ок" exit="True" reputation="0" money="0" power="0" end = "True"/>
+  </node>
+</dialogue>

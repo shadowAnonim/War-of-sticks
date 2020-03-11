@@ -1,0 +1,6 @@
+<dialogue name="repTest">
+  <node id="0" npcText="Привет">
+    <answer text="Да" exit="True" reputation="3" money="-3" power="2" />
+    <answer text="Нет" exit="True" reputation="-3" money="3" power="-2" />
+  </node>
+</dialogue>

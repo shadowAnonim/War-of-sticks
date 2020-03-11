@@ -27,6 +27,7 @@ public class DialogueManager : MonoBehaviour
         if (name == string.Empty) return;
         fileName = name;
         Load();
+        hero.dialogMode = true;
         hero.enableCameraMovement = false;
     }
 
@@ -49,7 +50,7 @@ public class DialogueManager : MonoBehaviour
 
         if (lastName == fileName) // проверка, чтобы не загружать уже загруженный файл
         {
-            BuildDialogue(0);
+            BuildDialogue(0, 0, 0, 0);
             return;
         }
 
@@ -82,6 +83,18 @@ public class DialogueManager : MonoBehaviour
                         bool result;
                         if (bool.TryParse(reader.GetAttribute("exit"), out result)) answer.exit = result; else answer.exit = false;
 
+                        int reputation;
+                        if (int.TryParse(reader.GetAttribute("reputation"), out reputation)) answer.reputation = reputation; else answer.reputation = 0;
+
+                        int power;
+                        if (int.TryParse(reader.GetAttribute("power"), out power)) answer.power = power; else answer.power = 0;
+
+                        int money;
+                        if (int.TryParse(reader.GetAttribute("money"), out money)) answer.money = money; else answer.money = 0;
+
+                        bool end;
+                        if (bool.TryParse(reader.GetAttribute("end"), out end)) answer.end = end; else answer.end = false;
+
                         node[index].answer.Add(answer);
                     }
                     inner.Close();
@@ -100,19 +113,20 @@ public class DialogueManager : MonoBehaviour
             lastName = string.Empty;
         }
 
-        BuildDialogue(0);
+        BuildDialogue(0, 0, 0, 0);
     }
 
-    void AddToList(bool exit, int toNode, string text, bool isActive)
+    void AddToList(bool exit, int toNode, string text, bool isActive, int reputation, int power, int money, bool end)
     {
-        BuildElement(exit, toNode, text, isActive);
+        BuildElement(exit, toNode, text, isActive, reputation, power, money, end);
         curY += height + offset;
         RectContent();
     }
 
-    void BuildElement(bool exit, int toNode, string text, bool isActiveButton)
+    void BuildElement(bool exit, int toNode, string text, bool isActiveButton, int reputation, int power, int money, bool end)
     {
         ButtonComponent clone = Instantiate(button) as ButtonComponent;
+        if (hero.money + money < 0) { isActiveButton = false; text += "(Недостаточно денег!)"; }
         clone.gameObject.SetActive(true);
         clone.rect.SetParent(scrollRect.content);
         clone.rect.localScale = Vector3.one;
@@ -122,9 +136,8 @@ public class DialogueManager : MonoBehaviour
         height = clone.rect.sizeDelta.y;
         clone.rect.anchoredPosition = new Vector2(0, -height / 2 - curY);
 
-        if (toNode > 0) SetNextDialogue(clone.button, toNode);
-        if (exit) SetExitDialogue(clone.button);
-
+        if (toNode > 0) SetNextDialogue(clone.button, toNode, reputation, power, money);
+        if (exit) SetExitDialogue(clone.button, reputation, power, money, end);
         buttons.Add(clone.rect);
     }
 
@@ -145,30 +158,41 @@ public class DialogueManager : MonoBehaviour
         RectContent();
     }
 
-    void SetNextDialogue(Button button, int id) // добавляем событие кнопке, для перенаправления на другой узел диалога
+    void SetNextDialogue(Button button, int id, int reputation, int power, int money) // добавляем событие кнопке, для перенаправления на другой узел диалога
     {
-        button.onClick.AddListener(() => BuildDialogue(id));
+        button.onClick.AddListener(() => BuildDialogue(id, reputation, power, money));
     }
 
-    void SetExitDialogue(Button button) // добавляем событие кнопке, для выхода из диалога
+    void SetExitDialogue(Button button, int reputation, int power, int money, bool end) // добавляем событие кнопке, для выхода из диалога
     {
-        button.onClick.AddListener(() => CloseDialogue());
+        button.onClick.AddListener(() => CloseDialogue(reputation, power, money, end));
     }
 
-    void CloseDialogue()
+    void CloseDialogue(int reputation, int power, int money, bool end)
     {
+        if (end)
+        {
+            Application.Quit();
+        }
+        hero.reputation += reputation;
+        hero.power += power;
+        hero.money += money;
         scrollRect.gameObject.SetActive(false);
         hero.enableCameraMovement = true;
+        hero.dialogMode = false;
         ClearDialogue();
     }
 
-    void BuildDialogue(int current)
+    void BuildDialogue(int current, int reputation, int power, int money)
     {
+        hero.reputation += reputation;
+        hero.power += power;
+        hero.money += money;
         ClearDialogue();
-        AddToList(false, 0, node[current].npcText, false);
+        AddToList(false, 0, node[current].npcText, false, 0, 0, 0, false);
         for (int i = 0; i < node[current].answer.Count; i++)
         {
-            AddToList(node[current].answer[i].exit, node[current].answer[i].toNode, node[current].answer[i].text, true);
+            AddToList(node[current].answer[i].exit, node[current].answer[i].toNode, node[current].answer[i].text, true, node[current].answer[i].reputation, node[current].answer[i].power, node[current].answer[i].money, node[current].answer[i].end);
         }
     }
 }

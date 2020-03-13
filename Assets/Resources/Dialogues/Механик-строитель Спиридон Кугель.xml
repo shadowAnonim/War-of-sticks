@@ -1,39 +1,22 @@
 <dialogue name="Механик-строитель Спиридон Кугель">
   <node id="0" npcText="Здравствуй.">
-    <answer text="Приветствую." toNode="3" />
-    <answer text="Пока." toNode="1" />
-    <answer text="Катись куды подальше." toNode="2" />
+    <answer text="Отвали." toNode="2" reputation="-5" money="0" power="0" />
+    <answer text="Здравствуй." toNode="3" />
   </node>
-  <node id="1" npcText="Ну ок">
-    <answer text="Увидимся." exit="True" />
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
   </node>
-  <node id="2" npcText="Грубиян">
-    <answer text="Заткнись" exit="True" />
+  <node id="2" npcText="Какой злой.">
+    <answer text="Заткнись." exit="True" reputation="-5" money="0" power="0" />
   </node>
-  <node id="3" npcText="Я строю стенобитные машины">
-    <answer text="Поговорим в другой раз" toNode="1" />
-    <answer text="Иди нафиг" toNode="2" />
-    <answer text="И что дальше?" />
+  <node id="3" npcText="Я могу сделать катапульты.">
+    <answer text="Сделаешь несколько?" toNode="4" />
+    <answer text="Отстань." exit = "True"/>
   </node>
-  <node id="4" npcText="Сколько нужно стенобойных машин?">
-    <answer text="Знаешь, я думаю, без них обойдёмся." toNode="7" />
-    <answer text="1" toNode="6" />
-    <answer text="2" toNode="6" />
-    <answer text="3" toNode="6" />
-  </node>
-  <node id="5" npcText="Насколько качественно их изготовить?">
-    <answer text="Главное, чтобы стреляли, остальное неважно." toNode="6" />
-    <answer text="Просто нормальные стенобойные орудия." toNode="6" />
-    <answer text="Чтобы с километра в форточку попадали." toNode="6" />
-  </node>
-  <node id="6" npcText="Будет сделано, ты мне только солдат немного пришли, чтобы рабочие руки были.">
-    <answer text="Будут тебе солдаты." exit="True" />
-  </node>
-  <node id="7" npcText="Обидно">
-    <answer text="На обиженых воду возят" exit="True" />
-    <answer text="Изобретай дальше свою ракетную машину." exit="True" />
-  </node>
-  <node id="8" npcText="Как скажешь.">
-    <answer text="SPIRIDON_4_END" exit="True" />
+  <node id="4" npcText="Конечно. Склько?">
+    <answer text="Знаешь, я думаю обойдёмся." exit = "True" reputation="0" money="0" power="0" />
+    <answer text="Одной катапульты наверное хватит." exit="True" reputation="0" money="-150" power="200"/>
+    <answer text="Сделай две." exit="True" reputation="5" money="-250" power="300" />
+    <answer text="Сделай три." exit="True" reputation="20" money="-350" power="400" />
   </node>
 </dialogue>

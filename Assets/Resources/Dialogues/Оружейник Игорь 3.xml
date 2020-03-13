@@ -1,0 +1,55 @@
+<dialogue name="Оружейник Игорь 3">
+  <node id="0" npcText="Здравствуй.">
+    <answer text="Здравствуй." toNode="3" />
+    <answer text="Иди нахрен." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
+  </node>
+  <node id="2" npcText="Какой злой.">
+    <answer text="Заткнись" exit ="True" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="3" npcText="Я отвечаю за вооружение ополчения.">
+    <answer text="Какое оружие ты можешь изготовить?" toNode="4" />
+    <answer text="Отвали." toNode="2" />
+  </node>
+  <node id="4" npcText="Я умею делать мечи и копья.">
+    <answer text="Как насчёт мечей?" toNode="5" />
+    <answer text="Что там с копьями?" toNode="6" />
+  </node>
+  <node id="5" npcText="Каждому солдату можно дать по 1-му мечу, или по 2 меча для каждой руки. 
+        В таком случае солдаты будут наносить в 2 раза больше урона, но не смогут использовать щит.">
+    <answer text="Куй по 1 мечу на солдата." toNode="8" reputation="-10" money="0" power="0" />
+    <answer text="Куй по 2 меча на солдата." toNode="9" reputation="5" money="0" power="0" />
+    <answer text="Что там с копьями?" toNode ="6"/>
+  </node>
+  <node id="6" npcText="Каждый солдат может взять по одному копью. Возможно использование щита. 
+        Наносит немного больше урона, чем 2 меча.">
+    <answer text="Что там с мечами?" toNode="5" />
+    <answer text="Делай копья." toNode="10" reputation="15" money="0" power="0" />
+  </node>
+  <node id="7" npcText="Насколько качественно их изготовлять?">
+    <answer text="И без них нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Куй как попало, и сойдёт" exit="True" reputation="-10" money="-75" power="75" />
+    <answer text="Куй качественно" exit="True" />
+    <answer text="Куй так, что бы в мире оружия лучше не было" exit="True" reputation="10" money="-125" power="125" />
+  </node>
+  <node id="8" npcText="Насколько качественно их изготовлять?">
+    <answer text="И без них нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Куй как попало, и сойдёт." exit="True" reputation="-10" money="-40" power="40"/>
+    <answer text="Куй качественно." exit="True" reputation="0" money="-50" power="50" />
+    <answer text="Куй так, чтобы в мире оружия лучше не было." exit = "True" reputation="10" money="-65" power="65"/>
+  </node>
+  <node id="9" npcText="Насколько качественно их изготовлять?">
+    <answer text="И без них нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Куй как попало, и сойдёт." exit="True" reputation="-10" money="-60" power="75" />
+    <answer text="Куй качественно." exit="True" reputation="0" money="-75" power="100"/>
+    <answer text="Куй так, чтобы в мире оружия лучше не было." exit="True" reputation="5" money="-120" power="120" />
+  </node>
+  <node id="10" npcText="Насколько качественно их изготовлять?">
+    <answer text="И без них нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Куй как попало, и сойдёт." exit="True" reputation="-10" money="-40" power="50" />
+    <answer text="Куй качественно." exit="True" reputation="0" money="-50" power="75"/>
+    <answer text="Куй так, чтобы в мире оружия лучше не было." exit="True" reputation="10" money="-80" power="100" />
+  </node>
+</dialogue>

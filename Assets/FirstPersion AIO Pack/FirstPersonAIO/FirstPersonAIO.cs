@@ -58,6 +58,8 @@ public class FirstPersonAIO : MonoBehaviour {
     public int reputation = 10;
     public int money = 0;
     public int power = 100;
+    private NPC general;
+    private int dialogCnt;
 
     #region Variables
 
@@ -255,9 +257,13 @@ public class BETA_SETTINGS{
 
         #endregion
 
-        reputation = 0;
+        reputation = 45;
 
-        money = 1000;
+        money = 450;
+
+        power = 0;
+
+        dialogCnt = 5;
     }
 
     private void Start()
@@ -325,13 +331,28 @@ public class BETA_SETTINGS{
         #region BETA_SETTINGS - Start
         fOVKick.fovStart = playerCamera.fieldOfView;
         #endregion
+
+        DialogueManager.Internal.DialogueStart("first");
+        general = GameObject.Find("General").GetComponent<NPC>();
+        general.Dialog = "";
     }
 
     private void Update()
     {
-        if (reputation < 0 && !dialogMode)
+        if (reputation <= 0 && !dialogMode)
         {
             DialogueManager.Internal.DialogueStart("repEnd");
+        }
+        if (dialogCnt == 0)
+        {
+            if(power < 550)
+            {
+                general.Dialog = "Fail";
+            }
+            else
+            {
+                general.Dialog = "Win";
+            }
         }
         #region Look Settings - Update
 
@@ -372,163 +393,202 @@ public class BETA_SETTINGS{
         #region Look Settings - FixedUpdate
 
         #endregion
+        if (!dialogMode)
+        {
+            #region Movement Settings - FixedUpdate
 
-        #region Movement Settings - FixedUpdate
-        
-        bool wasWalking = !isSprinting;
-        if(useStamina){
-            isSprinting = Input.GetKey(KeyCode.LeftShift) && !isCrouching && staminaInternal > 0 && (Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f || Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f);
-            if(isSprinting){
-                staminaInternal -= (staminaDepletionSpeed*2)*Time.deltaTime;
-                if(drawStaminaMeter){
-                    StaminaMeterBG.color = Vector4.MoveTowards(StaminaMeterBG.color, new Vector4(0,0,0,0.5f),0.15f);
-                    StaminaMeter.color = Vector4.MoveTowards(StaminaMeter.color, new Vector4(1,1,1,1),0.15f);
+            bool wasWalking = !isSprinting;
+            if (useStamina)
+            {
+                isSprinting = Input.GetKey(KeyCode.LeftShift) && !isCrouching && staminaInternal > 0 && (Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f || Mathf.Abs(fps_Rigidbody.velocity.x) > 0.01f);
+                if (isSprinting)
+                {
+                    staminaInternal -= (staminaDepletionSpeed * 2) * Time.deltaTime;
+                    if (drawStaminaMeter)
+                    {
+                        StaminaMeterBG.color = Vector4.MoveTowards(StaminaMeterBG.color, new Vector4(0, 0, 0, 0.5f), 0.15f);
+                        StaminaMeter.color = Vector4.MoveTowards(StaminaMeter.color, new Vector4(1, 1, 1, 1), 0.15f);
+                    }
                 }
-            }else if((!Input.GetKey(KeyCode.LeftShift)||Mathf.Abs(fps_Rigidbody.velocity.x)< 0.01f || Mathf.Abs(fps_Rigidbody.velocity.x)< 0.01f || isCrouching)&&staminaInternal<staminaLevel){
-                staminaInternal += staminaDepletionSpeed*Time.deltaTime;
+                else if ((!Input.GetKey(KeyCode.LeftShift) || Mathf.Abs(fps_Rigidbody.velocity.x) < 0.01f || Mathf.Abs(fps_Rigidbody.velocity.x) < 0.01f || isCrouching) && staminaInternal < staminaLevel)
+                {
+                    staminaInternal += staminaDepletionSpeed * Time.deltaTime;
+                }
+                if (drawStaminaMeter && staminaInternal == staminaLevel)
+                {
+                    StaminaMeterBG.color = Vector4.MoveTowards(StaminaMeterBG.color, new Vector4(0, 0, 0, 0), 0.15f);
+                    StaminaMeter.color = Vector4.MoveTowards(StaminaMeter.color, new Vector4(1, 1, 1, 0), 0.15f);
+                }
+                staminaInternal = Mathf.Clamp(staminaInternal, 0, staminaLevel);
+                float x = Mathf.Clamp(Mathf.SmoothDamp(StaminaMeter.transform.localScale.x, (staminaInternal / staminaLevel) * StaminaMeterBG.transform.localScale.x, ref smoothRef, (1) * Time.deltaTime, 1), 0.001f, StaminaMeterBG.transform.localScale.x);
+                StaminaMeter.transform.localScale = new Vector3(x, 1, 1);
             }
-                if(drawStaminaMeter&&staminaInternal==staminaLevel){
-                    StaminaMeterBG.color = Vector4.MoveTowards(StaminaMeterBG.color, new Vector4(0,0,0,0),0.15f);
-                    StaminaMeter.color = Vector4.MoveTowards(StaminaMeter.color, new Vector4(1,1,1,0),0.15f);
-                }
-                staminaInternal = Mathf.Clamp(staminaInternal,0,staminaLevel);
-                float x = Mathf.Clamp(Mathf.SmoothDamp(StaminaMeter.transform.localScale.x,(staminaInternal/staminaLevel)*StaminaMeterBG.transform.localScale.x,ref smoothRef,(1)*Time.deltaTime,1),0.001f, StaminaMeterBG.transform.localScale.x);
-                StaminaMeter.transform.localScale = new Vector3(x,1,1); 
-        } else{isSprinting = Input.GetKey(KeyCode.LeftShift);}
+            else { isSprinting = Input.GetKey(KeyCode.LeftShift); }
 
-        advanced.tooSteep = false;
-        float inrSprintSpeed;
-        inrSprintSpeed = sprintSpeedInternal;
-        Vector3 dMove = Vector3.zero;
-        speed = walkByDefault ? isCrouching ? walkSpeedInternal : (isSprinting ? inrSprintSpeed : walkSpeedInternal) : (isSprinting ? walkSpeedInternal : inrSprintSpeed);
-        Ray ray = new Ray(transform.position - new Vector3(0,(capsule.height/2)-0.01f,0) , -transform.up);
-        Debug.DrawLine(ray.origin,ray.origin - new Vector3(0,0.05f,0),Color.black);
-        if(IsGrounded || fps_Rigidbody.velocity.y < 0.1) {
-            RaycastHit[] hits = Physics.RaycastAll(ray, 0.05f);
-            float nearest = float.PositiveInfinity;
-            IsGrounded = false;
-            for(int i = 0; i < hits.Length; i++) {
-                if(!hits[i].collider.isTrigger && hits[i].distance < nearest) {
-                    IsGrounded = true;
-                    nearest = hits[i].distance;
-                }
-            }
-        }
-  
-
-
-       
-    if(advanced.maxSlopeAngle>0){
-        if(Physics.Raycast(new Vector3(transform.position.x,transform.position.y-0.75f,transform.position.z+0.1f), Vector3.down,out advanced.surfaceAngleCheck,1f)){
-        
-            if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)<89){
-                        advanced.tooSteep = false;                       
-                        dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * speed;           
-              if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>advanced.maxSlopeAngle){
-                        advanced.tooSteep = true;
-                         isSprinting=false;
-                        dMove = new Vector3(0,-4,0);
-                        
-            }else if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>44){
-                        advanced.tooSteep = true;
-                        isSprinting=false;
-                        dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0,-4,0);
-                }
-            }    
-    }
-    
-      else  if(Physics.Raycast( new Vector3(transform.position.x-0.086f,transform.position.y-0.75f,transform.position.z-0.05f), Vector3.down,out advanced.surfaceAngleCheck,1f)){
-       
-            if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)<89){
-                        advanced.tooSteep = false;             
-                        dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;           
-              if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>70){
-                        advanced.tooSteep = true;
-                         isSprinting=false;
-                        dMove = new Vector3(0,-4,0);
-                        
-            }else if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>45){
-                        advanced.tooSteep = true;
-                        isSprinting=false;
-                        dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0,-4,0);
-                       
-                }
-            }    
-            else  if(Physics.Raycast( new Vector3(transform.position.x+0.086f,transform.position.y-0.75f,transform.position.z-0.05f), Vector3.down,out advanced.surfaceAngleCheck,1f)){
-        
-            if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)<89){
-                        advanced.tooSteep = false;                   
-                        dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
-              if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>70){
-                        advanced.tooSteep = true;
-                         isSprinting=false;
-                        dMove = new Vector3(0,-4,0);
-                        
-            }else if(Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up)>45){
-                        advanced.tooSteep = true;
-                        isSprinting=false;
-                        dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0,-4,0);
+            advanced.tooSteep = false;
+            float inrSprintSpeed;
+            inrSprintSpeed = sprintSpeedInternal;
+            Vector3 dMove = Vector3.zero;
+            speed = walkByDefault ? isCrouching ? walkSpeedInternal : (isSprinting ? inrSprintSpeed : walkSpeedInternal) : (isSprinting ? walkSpeedInternal : inrSprintSpeed);
+            Ray ray = new Ray(transform.position - new Vector3(0, (capsule.height / 2) - 0.01f, 0), -transform.up);
+            Debug.DrawLine(ray.origin, ray.origin - new Vector3(0, 0.05f, 0), Color.black);
+            if (IsGrounded || fps_Rigidbody.velocity.y < 0.1)
+            {
+                RaycastHit[] hits = Physics.RaycastAll(ray, 0.05f);
+                float nearest = float.PositiveInfinity;
+                IsGrounded = false;
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    if (!hits[i].collider.isTrigger && hits[i].distance < nearest)
+                    {
+                        IsGrounded = true;
+                        nearest = hits[i].distance;
                     }
                 }
             }
-        }else{advanced.tooSteep = false;
+
+
+
+
+            if (advanced.maxSlopeAngle > 0)
+            {
+                if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 0.75f, transform.position.z + 0.1f), Vector3.down, out advanced.surfaceAngleCheck, 1f))
+                {
+
+                    if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) < 89)
+                    {
+                        advanced.tooSteep = false;
+                        dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * speed;
+                        if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > advanced.maxSlopeAngle)
+                        {
+                            advanced.tooSteep = true;
+                            isSprinting = false;
+                            dMove = new Vector3(0, -4, 0);
+
+                        }
+                        else if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > 44)
+                        {
+                            advanced.tooSteep = true;
+                            isSprinting = false;
+                            dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0, -4, 0);
+                        }
+                    }
+                }
+
+                else if (Physics.Raycast(new Vector3(transform.position.x - 0.086f, transform.position.y - 0.75f, transform.position.z - 0.05f), Vector3.down, out advanced.surfaceAngleCheck, 1f))
+                {
+
+                    if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) < 89)
+                    {
+                        advanced.tooSteep = false;
                         dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
-            }    
-    }
-         else{advanced.tooSteep = false;
-                        dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
+                        if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > 70)
+                        {
+                            advanced.tooSteep = true;
+                            isSprinting = false;
+                            dMove = new Vector3(0, -4, 0);
+
+                        }
+                        else if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > 45)
+                        {
+                            advanced.tooSteep = true;
+                            isSprinting = false;
+                            dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0, -4, 0);
+
+                        }
+                    }
+                    else if (Physics.Raycast(new Vector3(transform.position.x + 0.086f, transform.position.y - 0.75f, transform.position.z - 0.05f), Vector3.down, out advanced.surfaceAngleCheck, 1f))
+                    {
+
+                        if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) < 89)
+                        {
+                            advanced.tooSteep = false;
+                            dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
+                            if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > 70)
+                            {
+                                advanced.tooSteep = true;
+                                isSprinting = false;
+                                dMove = new Vector3(0, -4, 0);
+
+                            }
+                            else if (Vector3.Angle(advanced.surfaceAngleCheck.normal, Vector3.up) > 45)
+                            {
+                                advanced.tooSteep = true;
+                                isSprinting = false;
+                                dMove = (transform.forward * inputXY.y * speed + transform.right * inputXY.x) + new Vector3(0, -4, 0);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    advanced.tooSteep = false;
+                    dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
+                }
+            }
+            else
+            {
+                advanced.tooSteep = false;
+                dMove = transform.forward * inputXY.y * speed + transform.right * inputXY.x * walkSpeedInternal;
             }
 
 
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        inputXY = new Vector2(horizontalInput, verticalInput);
-        if(inputXY.magnitude > 1) { inputXY.Normalize(); }
-       
-        float yv = fps_Rigidbody.velocity.y;
-        bool didJump = canHoldJump?Input.GetButton("Jump"): Input.GetButtonDown("Jump");
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+            inputXY = new Vector2(horizontalInput, verticalInput);
+            if (inputXY.magnitude > 1) { inputXY.Normalize(); }
 
-        if (!canJump) didJump = false;
+            float yv = fps_Rigidbody.velocity.y;
+            bool didJump = canHoldJump ? Input.GetButton("Jump") : Input.GetButtonDown("Jump");
 
-        if(IsGrounded && didJump && jumpPowerInternal > 0)
-        {
-            yv += jumpPowerInternal;
-            IsGrounded = false;
-            didJump=false;
-        }
+            if (!canJump) didJump = false;
 
-        if(playerCanMove)
-        {
-            fps_Rigidbody.velocity = dMove + Vector3.up * yv;
-        } else{fps_Rigidbody.velocity = Vector3.zero;}
-
-        if(dMove.magnitude > 0 || !IsGrounded || advanced.tooSteep) {
-            capsule.sharedMaterial = advanced.zeroFrictionMaterial;
-        } else { capsule.sharedMaterial = advanced.highFrictionMaterial; }
-
-        fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
-        /* if(fOVKick.useFOVKick && wasWalking == isSprinting && fps_Rigidbody.velocity.magnitude > 0.1f && !isCrouching){
-            StopAllCoroutines();
-            StartCoroutine(wasWalking ? FOVKickOut() : FOVKickIn());
-        } */
-
-        if(_crouchModifiers.useCrouch) {
-            if(!_crouchModifiers.toggleCrouch){ isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey);}
-            else{if(Input.GetKeyDown(_crouchModifiers.crouchKey)){isCrouching = !isCrouching || _crouchModifiers.crouchOverride;}}
-
-            if(isCrouching) {
-                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight/2, 5*Time.deltaTime);
-                        walkSpeedInternal = walkSpeed*_crouchModifiers.crouchWalkSpeedMultiplier;
-                        jumpPowerInternal = jumpPower* _crouchModifiers.crouchJumpPowerMultiplier;
-                } else {
-                capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5*Time.deltaTime);    
-                walkSpeedInternal = walkSpeed;
-                jumpPowerInternal = jumpPower;
+            if (IsGrounded && didJump && jumpPowerInternal > 0)
+            {
+                yv += jumpPowerInternal;
+                IsGrounded = false;
+                didJump = false;
             }
+
+            if (/*playerCanMove*/ !dialogMode)
+            {
+                fps_Rigidbody.velocity = dMove + Vector3.up * yv;
+            }
+            else { fps_Rigidbody.velocity = Vector3.zero; }
+
+            if (dMove.magnitude > 0 || !IsGrounded || advanced.tooSteep)
+            {
+                capsule.sharedMaterial = advanced.zeroFrictionMaterial;
+            }
+            else { capsule.sharedMaterial = advanced.highFrictionMaterial; }
+
+            fps_Rigidbody.AddForce(Physics.gravity * (advanced.gravityMultiplier - 1));
+            /* if(fOVKick.useFOVKick && wasWalking == isSprinting && fps_Rigidbody.velocity.magnitude > 0.1f && !isCrouching){
+                StopAllCoroutines();
+                StartCoroutine(wasWalking ? FOVKickOut() : FOVKickIn());
+            } */
+
+            if (_crouchModifiers.useCrouch)
+            {
+                if (!_crouchModifiers.toggleCrouch) { isCrouching = _crouchModifiers.crouchOverride || Input.GetKey(_crouchModifiers.crouchKey); }
+                else { if (Input.GetKeyDown(_crouchModifiers.crouchKey)) { isCrouching = !isCrouching || _crouchModifiers.crouchOverride; } }
+
+                if (isCrouching)
+                {
+                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight / 2, 5 * Time.deltaTime);
+                    walkSpeedInternal = walkSpeed * _crouchModifiers.crouchWalkSpeedMultiplier;
+                    jumpPowerInternal = jumpPower * _crouchModifiers.crouchJumpPowerMultiplier;
+                }
+                else
+                {
+                    capsule.height = Mathf.MoveTowards(capsule.height, _crouchModifiers.colliderHeight, 5 * Time.deltaTime);
+                    walkSpeedInternal = walkSpeed;
+                    jumpPowerInternal = jumpPower;
+                }
+            }
+
+            #endregion
         }
-
-        #endregion
-
         #region BETA_SETTINGS - FixedUpdate
 
         #endregion
@@ -690,6 +750,11 @@ public class BETA_SETTINGS{
         
         #endregion
 
+         if (dialogMode)
+        {
+            fps_Rigidbody.velocity = Vector3.zero;
+        }
+
     }
 
 /*     public IEnumerator FOVKickOut()
@@ -729,6 +794,11 @@ public class BETA_SETTINGS{
     private void OnTriggerEnter(Collider other)
     {
         DialogueManager.Internal.DialogueStart(other.gameObject.GetComponent<NPC>().Dialog);
+        if (other.gameObject.GetComponent<NPC>().Dialog != "")
+        {
+            dialogCnt--;
+        }
+        other.gameObject.GetComponent<NPC>().Dialog = "";
     }
 
 }

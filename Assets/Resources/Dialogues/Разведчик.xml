@@ -1,0 +1,18 @@
+<dialogue name="Разведчик.">
+  <node id="0" npcText="Здравствуй.">
+    <answer text="Здравствуй." toNode="3" />
+    <answer text="Иди нахрен." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
+  </node>
+  <node id="2" npcText="Какой злой.">
+    <answer text="Заткнись" exit="True" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="3" npcText="Не советую тебе выходить за ворота, там опасно, но у меня есть знакомые в Гундели.
+        Могу при наличии денежных средств сгонять в крепость и посмотреть: что там, да как.">
+    <answer text="Нет, не надо." exit="True" reputation="0" money="0" power="0"/>
+    <answer text="Хорошо. Но больше денег дать не могу." exit="True" reputation="0" money="-15" power="85"/>
+    <answer text="Отлично. Возвращайся скорее." exit="True" reputation="15" money="-30" power="115" />
+  </node>
+</dialogue>

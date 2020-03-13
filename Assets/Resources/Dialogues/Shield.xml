@@ -1,0 +1,24 @@
+<dialogue name="Щитник Юрий Гаврилов.">
+  <node id="0" npcText="Здравствуй.">
+    <answer text="Здравствуй." toNode="3" />
+    <answer text="Не могу сейчас разговаривать." toNode="1" />
+    <answer text="Отвали." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
+  </node>
+  <node id="2" npcText="Грубиян.">
+    <answer text="Заткнись." exit="True" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="3" npcText="Я делаю щиты для войска.">
+    <answer text="И что дальше?" toNode="4" />
+    <answer text="Мне надо идти." toNode="1" />
+    <answer text="Отколыхнись." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="4" npcText="Щит увеличивает защищённость солдата, но с ним нельзя использовать 2 меча.">
+    <answer text="Давай тогда лучше без щитов." exit="True" />
+    <answer text="Делай щиты просто, что бы были." exit="True" reputation="-5" money="-50" power="75" />
+    <answer text="Делай щиты так, чтобы защищали." exit="True" reputation="-5" money="-75" power="100"/>
+    <answer text="Делай щиты так, чтобы пробить было нельзя." exit="True" reputation="5" money="-100" power="120" />
+  </node>
+</dialogue>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Xml;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class DialogueManager : MonoBehaviour
         Load();
         hero.dialogMode = true;
         hero.enableCameraMovement = false;
+        hero.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
     public static DialogueManager Internal
@@ -131,6 +133,10 @@ public class DialogueManager : MonoBehaviour
         clone.rect.SetParent(scrollRect.content);
         clone.rect.localScale = Vector3.one;
         clone.text.text = text;
+        if (money != 0)
+        {
+            clone.text.text += " Цена: " + (-money);
+        }
         clone.rect.sizeDelta = new Vector2(clone.rect.sizeDelta.x, clone.text.preferredHeight + offset);
         clone.button.interactable = isActiveButton;
         height = clone.rect.sizeDelta.y;
@@ -172,7 +178,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (end)
         {
-            Application.Quit();
+            SceneManager.LoadScene("MainMenu");
         }
         hero.reputation += reputation;
         hero.power += power;

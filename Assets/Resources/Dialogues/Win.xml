@@ -1,0 +1,6 @@
+<dialogue name="Win">
+  <node id="0" npcText="Вы взяли Гундели штурмом, 
+        ваше королевство стало самым сильным. Вы выиграли.">
+    <answer text="Ок" exit="True" end = "True"/>
+  </node>
+</dialogue>

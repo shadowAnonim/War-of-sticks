@@ -1,0 +1,5 @@
+<dialogue name="deathEnd">
+  <node id="0" npcText="Вы подошли слишком близко к вражеской крепости и вас взяли в плен. Вы проиграли.">
+    <answer text="Ок" exit="True" reputation="3" money="0" power="0" end ="True"/>
+  </node>
+</dialogue>

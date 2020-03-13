@@ -1,0 +1,6 @@
+<dialogue name="Fail">
+  <node id="0" npcText="Вы пошли на штурм крепости, но вашим войскам 
+        не хватило сил, чтобы взять Гундели. Вы проиграли.">
+    <answer text="Ок" exit="True" end ="True"/>
+  </node>
+</dialogue>

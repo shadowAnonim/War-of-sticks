@@ -1,0 +1,18 @@
+<dialogue name="Повар">
+  <node id="0" npcText="Здравствуй.">
+    <answer text="Здравствуй." toNode="3" />
+    <answer text="Иди нахрен." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
+  </node>
+  <node id="2" npcText="Какой злой.">
+    <answer text="Заткнись." exit="True" />
+  </node>
+  <node id="3" npcText="Я обеспечиваю армию едой.">
+    <answer text="И без неё нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Ты это, экономь давай." exit="True" reputation="-15" money="-35" power="-25" />
+    <answer text="Корми, как кормил." exit="True" reputation="0" money="-45" power="0"/>
+    <answer text="Посытнее давай, да побольше накладывай." exit="True" reputation="75" money="-55" power="30" />
+  </node>
+</dialogue>

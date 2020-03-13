@@ -1,0 +1,22 @@
+<dialogue name="Бронник Игнат Родькин">
+  <node id="0" npcText="Здравствуй.">
+    <answer text="Здравствуй." toNode="3" />
+    <answer text="Отвянь." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="1" npcText="Хорошо.">
+    <answer text="До встречи." exit="True" />
+  </node>
+  <node id="2" npcText="Какой злой.">
+    <answer text="Заткнись." exit="True" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="3" npcText="Я обеспечиваю войско бронёй.">
+    <answer text="А что она даёт?" toNode="4" />
+    <answer text="Ну тебя нахрен." toNode="2" reputation="-5" money="0" power="0" />
+  </node>
+  <node id="4" npcText="Броня даёт дополнительную защиту войска.">
+    <answer text="И без неё нормально." exit="True" reputation="0" money="0" power="0" />
+    <answer text="Сделай так, чтобы она просто была." exit = "True" reputation="-10" money="-75" power="100" />
+    <answer text="Сделай нормальную броню." exit ="True" reputation="0" money="-90" power="140"/>
+    <answer text="Сделай броню так, чтобы солмать было нельзя" exit ="True" reputation="20" money="-120" power="175" />
+  </node>
+</dialogue>
